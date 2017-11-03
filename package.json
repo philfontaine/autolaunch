@@ -2,7 +2,7 @@
   "name": "autolaunch",
   "displayName": "AutoLaunch",
   "description": "Automatically run tasks in tasks.json or launch config in launch.json",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "keywords": ["run", "launch", "tasks", "debug", "auto"],
   "homepage": "https://github.com/philfontaine/autolaunch",
   "bugs": {
@@ -23,11 +23,13 @@
   "contributes": {
     "configuration": [
       {
+        "type": "object",
         "title": "AutoLaunch configuration",
         "properties": {
           "autolaunch.config": {
             "description": "Array of {\"type\": \"task\" or \"launch\", \"name\": string}",
             "type": "array",
+            "default": [],
             "items": {
               "type": "object",
               "required": ["type", "name"],
@@ -41,7 +43,7 @@
                   "type": "string",
                   "enum": ["task", "launch"]
                 },
-                "name": { "type": "string", "minimumLength": "1" }
+                "name": { "type": "string", "minLength": "1" }
               }
             },
             "defaultSnippets": [

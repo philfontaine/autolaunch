@@ -46,5 +46,9 @@ settings.json
 ## Limitations
 - Launches are launched in debug mode (same as 'Start Debugging' or F5)
 
+## Github
+- [Repository](https://github.com/philfontaine/autolaunch)
+- [Change Log](https://github.com/philfontaine/autolaunch/blob/master/CHANGELOG.md)
+- [Issues](https://github.com/philfontaine/autolaunch/issues)
 
 ---
