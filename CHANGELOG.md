@@ -1,4 +1,4 @@
-# Change Log
+# Changelog
 
 ### 0.0.3 (November 2, 2017)
 - Updated package.json
