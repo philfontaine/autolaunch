@@ -2,22 +2,8 @@
   "name": "autolaunch",
   "displayName": "AutoLaunch",
   "description": "Automatically run tasks in tasks.json or launch config in launch.json",
-  "version": "0.0.1",
-  "keywords": [
-    "auto",
-    "automatically",
-    "open",
-    "run",
-    "launch",
-    "task",
-    "debug",
-    "tasks",
-    "tasks.json",
-    "launch.json",
-    "npm",
-    "start",
-    "start up"
-  ],
+  "version": "0.0.2",
+  "keywords": ["run", "launch", "tasks", "debug", "auto"],
   "homepage": "https://github.com/philfontaine/autolaunch",
   "bugs": {
     "url": "https://github.com/philfontaine/autolaunch/issues"
@@ -40,9 +26,29 @@
         "title": "AutoLaunch configuration",
         "properties": {
           "autolaunch.config": {
-            "type": "array",
             "description": "Array of {\"type\": \"task\" or \"launch\", \"name\": string}",
-            "default": [{ "type": "task", "name": "" }]
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["type", "name"],
+              "defaultSnippets": [
+                {
+                  "body": { "type": "task$1", "name": "$2" }
+                }
+              ],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": ["task", "launch"]
+                },
+                "name": { "type": "string", "minimumLength": "1" }
+              }
+            },
+            "defaultSnippets": [
+              {
+                "body": [{ "type": "task$1", "name": "$2" }]
+              }
+            ]
           }
         }
       }
