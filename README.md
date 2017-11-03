@@ -1,6 +1,6 @@
-# Autolaunch
+# AutoLaunch
 
-Autolaunch will automatically run a task found in "tasks.json" or launch a debug configuration found in "launch.json" when VS Code starts up.
+AutoLaunch will automatically run a task found in "tasks.json" or launch a debug configuration found in "launch.json" when VS Code starts up.
 
 ## Features
 - Target specific tasks or launches based on their name

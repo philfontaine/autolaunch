@@ -1,17 +1,17 @@
 'use strict'
 import * as vscode from 'vscode'
 
-interface Autolaunch {
+interface AutoLaunch {
   type: string
   name: string
 }
 
 const showErrorMessage = (message: string): void => {
-  vscode.window.showErrorMessage(`Error in Autolaunch extension: ${message}`)
+  vscode.window.showErrorMessage(`Error in AutoLaunch extension: ${message}`)
 }
 
-export async function activate(context: vscode.ExtensionContext) {
-  const autolaunchArray: ReadonlyArray<Autolaunch> = vscode.workspace
+export function activate(context: vscode.ExtensionContext) {
+  const autolaunchArray: ReadonlyArray<AutoLaunch> = vscode.workspace
     .getConfiguration('autolaunch')
     .get('config')
   if (autolaunchArray) {
@@ -46,7 +46,7 @@ export async function activate(context: vscode.ExtensionContext) {
       })
     } else {
       showErrorMessage(
-        'Property autolaunch must be an array of {"type": "task" || "launch", "name": string }'
+        'Property "autolaunch.config" must be an Array of {"type": "task" || "launch", "name": string }'
       )
     }
   }
