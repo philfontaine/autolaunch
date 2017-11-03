@@ -1,0 +1,55 @@
+{
+  "name": "autolaunch",
+  "displayName": "AutoLaunch",
+  "description": "Automatically run tasks in tasks.json or launch config in launch.json",
+  "version": "0.0.1",
+  "keywords": [
+    "auto",
+    "automatically",
+    "open",
+    "run",
+    "launch",
+    "task",
+    "debug",
+    "tasks",
+    "tasks.json",
+    "launch.json",
+    "npm",
+    "start",
+    "start up"
+  ],
+  "publisher": "philfontaine",
+  "engines": {
+    "vscode": "^1.17.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": ["*"],
+  "main": "./out/extension",
+  "contributes": {
+    "configuration": [
+      {
+        "title": "Autolaunch configuration",
+        "properties": {
+          "autolaunch.config": {
+            "type": "array",
+            "description": "Array of {\"type\": \"task\" or \"launch\", \"name\": string}",
+            "default": [{ "type": "task", "name": "" }]
+          }
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "npm run compile && node ./node_modules/vscode/bin/test"
+  },
+  "devDependencies": {
+    "typescript": "^2.5.3",
+    "vscode": "^1.1.5",
+    "@types/node": "^7.0.43",
+    "@types/mocha": "^2.2.42"
+  }
+}
