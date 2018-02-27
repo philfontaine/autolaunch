@@ -2,8 +2,14 @@
   "name": "autolaunch",
   "displayName": "AutoLaunch",
   "description": "Automatically run tasks in tasks.json or launch config in launch.json",
-  "version": "0.0.3",
-  "keywords": ["run", "launch", "tasks", "debug", "auto"],
+  "version": "1.0.0",
+  "keywords": [
+    "auto",
+    "run",
+    "launch",
+    "tasks",
+    "debug"
+  ],
   "homepage": "https://github.com/philfontaine/autolaunch",
   "bugs": {
     "url": "https://github.com/philfontaine/autolaunch/issues"
@@ -17,42 +23,23 @@
   "engines": {
     "vscode": "^1.17.0"
   },
-  "categories": ["Other", "Debuggers"],
-  "activationEvents": ["*"],
+  "categories": [
+    "Other",
+    "Debuggers"
+  ],
+  "activationEvents": [
+    "*"
+  ],
   "main": "./out/extension",
   "contributes": {
-    "configuration": [
+    "jsonValidation": [
       {
-        "type": "object",
-        "title": "AutoLaunch configuration",
-        "properties": {
-          "autolaunch.config": {
-            "description": "Array of {\"type\": \"task\" or \"launch\", \"name\": string}",
-            "type": "array",
-            "default": [],
-            "items": {
-              "type": "object",
-              "required": ["type", "name"],
-              "defaultSnippets": [
-                {
-                  "body": { "type": "task$1", "name": "$2" }
-                }
-              ],
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "enum": ["task", "launch"]
-                },
-                "name": { "type": "string", "minLength": "1" }
-              }
-            },
-            "defaultSnippets": [
-              {
-                "body": [{ "type": "task$1", "name": "$2" }]
-              }
-            ]
-          }
-        }
+        "fileMatch": "/.vscode/tasks.json",
+        "url": "./custom-tasks-schema.json"
+      },
+      {
+        "fileMatch": "/.vscode/launch.json",
+        "url": "./custom-launch-schema.json"
       }
     ]
   },

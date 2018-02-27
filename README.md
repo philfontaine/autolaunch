@@ -1,50 +1,56 @@
 # AutoLaunch
 
-AutoLaunch will automatically run a task found in "tasks.json" or launch a debug configuration found in "launch.json" when VS Code starts up.
+AutoLaunch will automatically run a task in "tasks.json" or launch a configuration in "launch.json" when VS Code starts up. 
 
-## Features
-- Target specific tasks or launches based on their name
-- Runs on VS Code start-up
-- Add as many tasks/launches as needed
-- Easily per project configurable
+Simply add `"auto": true` in the task or configuration you want to AutoLaunch!
 
-## Requirements
-### Tasks
-Tasks must be defined in `tasks.json`. They **MUST** have the `taskName` or `label` properties defined, depending on the task `type` property.
-
-[`tasks.json` syntax Reference](https://code.visualstudio.com/docs/editor/tasks)
-
-
-### Launches
-Launches must be defined in `launch.json`. They must have the `name` property defined.
-
-[`launch.json` syntax Reference](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations)
-
-### Settings
-`autolaunch.config`: Array of `{"type": "task" || "launch", "name": string}`
-
-`autolaunch.config` must be defined for this extension to work. It should be defined in the workspace settings, located in `.vscode/settings.json`. It can also be defined in User Settings, but keep in mind that this extension will run for every project.
-
-Example: 
+tasks.json example:
 ```json
-settings.json
-
 {
-  "autolaunch.config": [
+  "version": "2.0.0",
+  "tasks": [
     {
-      "type": "task",
-      "name": "My Task"
-    },
-    {
-      "type": "launch",
-      "name": "My Launch Configuration"
+      "label": "npm start",
+      "type": "npm",
+      "script": "start",
+      "auto": true
     }
   ]
 }
 ```
 
+launch.json example:
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Program",
+      "program": "${workspaceRoot}/Program.js",
+      "auto": true
+    }
+  ]
+}
+```
+
+## Requirements
+### Tasks
+Tasks must be defined in `tasks.json`. They must have the `label` or `taskName` properties defined. `taskName` is deprecated by VS Code but still supported by the extension.
+
+[`tasks.json` syntax Reference](https://code.visualstudio.com/docs/editor/tasks)
+
+### Configurations
+Configurations must be defined in `launch.json`. They must have the `name` property defined.
+
+[`launch.json` syntax Reference](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations)
+
 ## Limitations
-- Launches are launched in debug mode (same as 'Start Debugging' or F5)
+- Configurations are launched in debug mode (same as 'Start Debugging' or F5)
+
+## Known Issues
+- VS Code will warn that "Property auto is not allowed". Waiting for this [issue](https://github.com/Microsoft/vscode/issues/20193).
 
 ## Links
 - [Marketplace](https://marketplace.visualstudio.com/items?itemName=philfontaine.autolaunch)

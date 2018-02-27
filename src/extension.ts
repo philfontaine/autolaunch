@@ -1,20 +1,70 @@
 'use strict'
 import * as vscode from 'vscode'
 
+const showErrorMessage = (message: string): void => {
+  vscode.window.showErrorMessage(`AutoLaunch: ${message}`)
+}
+
+const showWarningMessage = (message: string): void => {
+  vscode.window.showWarningMessage(`AutoLaunch: ${message}`)
+}
+
+export function activate(context: vscode.ExtensionContext) {
+  if (legacyAutoLaunch()) return
+  runTasks()
+  launchConfigurations()
+}
+
+function runTasks() {
+  const tasks = vscode.workspace.getConfiguration('tasks').get('tasks');
+  if (tasks && Array.isArray(tasks)) {
+    tasks.forEach(task => {
+      if (task.auto === true) {
+        const name = task.label || task.taskName;
+        if (name) {
+          vscode.commands.executeCommand('workbench.action.tasks.runTask', name)
+        } else {
+          showErrorMessage('tasks.json: the property "label" must be defined.')
+        }
+      }
+    });
+  }
+}
+
+function launchConfigurations() {
+  const configurations = vscode.workspace.getConfiguration('launch').get('configurations');
+  if (configurations && Array.isArray(configurations)) {
+    configurations.forEach(configuration => {
+      if (configuration.auto === true) {
+        const name = configuration.name;
+        if (name) {
+          vscode.debug
+            .startDebugging(vscode.workspace.workspaceFolders[0], name)
+            .then(null, reason => {
+              showErrorMessage(reason)
+            })
+        } else {
+          showErrorMessage('launch.json: the property "name" must be defined.')
+        }
+      }
+    });
+  }
+}
+
+/* LEGACY CODE, WILL BE REMOVED IN FUTURE RELEASES */
 interface AutoLaunch {
   type: string
   name: string
 }
 
-const showErrorMessage = (message: string): void => {
-  vscode.window.showErrorMessage(`Error in AutoLaunch extension: ${message}`)
-}
-
-export function activate(context: vscode.ExtensionContext) {
+function legacyAutoLaunch() {
+  let usingLegacy: boolean;
   const autolaunchArray: ReadonlyArray<AutoLaunch> = vscode.workspace
     .getConfiguration('autolaunch')
     .get('config')
   if (autolaunchArray) {
+    usingLegacy = true;
+    showWarningMessage('autolaunch.config configuration is DEPRECATED. See the extension\'s README for more details.')
     if (Array.isArray(autolaunchArray)) {
       autolaunchArray.forEach(autolaunch => {
         const { name, type } = autolaunch
@@ -49,5 +99,8 @@ export function activate(context: vscode.ExtensionContext) {
         'Property "autolaunch.config" must be an Array of {"type": "task" || "launch", "name": string }'
       )
     }
+  } else {
+    usingLegacy = false;
   }
+  return usingLegacy;
 }
