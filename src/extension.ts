@@ -11,12 +11,14 @@ const showWarningMessage = (message: string): void => {
 
 export function activate(context: vscode.ExtensionContext) {
   if (legacyAutoLaunch()) return
-  runTasks()
-  launchConfigurations()
+  vscode.workspace.workspaceFolders.forEach(workspaceFolder => {
+    runTasks(workspaceFolder)
+    launchConfigurations(workspaceFolder)
+  });
 }
 
-function runTasks() {
-  const tasks = vscode.workspace.getConfiguration('tasks').get('tasks');
+function runTasks(workspaceFolder: vscode.WorkspaceFolder) {
+  const tasks = vscode.workspace.getConfiguration("tasks", workspaceFolder.uri).get('tasks')
   if (tasks && Array.isArray(tasks)) {
     tasks.forEach(task => {
       if (task.auto === true) {
@@ -31,15 +33,15 @@ function runTasks() {
   }
 }
 
-function launchConfigurations() {
-  const configurations = vscode.workspace.getConfiguration('launch').get('configurations');
+function launchConfigurations(workspaceFolder: vscode.WorkspaceFolder) {
+  const configurations = vscode.workspace.getConfiguration("launch", workspaceFolder.uri).get('configurations')
   if (configurations && Array.isArray(configurations)) {
     configurations.forEach(configuration => {
       if (configuration.auto === true) {
         const name = configuration.name;
         if (name) {
           vscode.debug
-            .startDebugging(vscode.workspace.workspaceFolders[0], name)
+            .startDebugging(workspaceFolder, name)
             .then(null, reason => {
               showErrorMessage(reason)
             })

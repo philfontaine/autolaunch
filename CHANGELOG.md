@@ -1,5 +1,8 @@
 # Changelog
 
+### 1.1.0 (February 27, 2018)
+- Workspace support. Will now parse every folder added to the workspace.
+
 ### 1.0.0 (February 27, 2018)
 - Breaking change: autolaunch.config is deprecated. Now simply add `"auto": true` to automatically run/launch the task/configuration.
 - Added schema validation for the `auto` property
