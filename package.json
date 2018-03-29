@@ -2,15 +2,14 @@
   "name": "autolaunch",
   "displayName": "AutoLaunch",
   "description": "Automatically run tasks in tasks.json or launch config in launch.json",
-  "version": "1.1.0",
-  "keywords": [
-    "auto",
-    "run",
-    "launch",
-    "tasks",
-    "debug"
-  ],
-  "homepage": "https://github.com/philfontaine/autolaunch",
+  "version": "1.2.0",
+  "keywords": ["auto", "run", "launch", "tasks", "debug"],
+  "icon": "./logo/AutoLaunch128.png",
+  "galleryBanner": {
+    "color": "#add8e6",
+    "theme": "light"
+  },
+  "homepage": "https://marketplace.visualstudio.com/items?itemName=philfontaine.autolaunch",
   "bugs": {
     "url": "https://github.com/philfontaine/autolaunch/issues"
   },
@@ -23,13 +22,8 @@
   "engines": {
     "vscode": "^1.17.0"
   },
-  "categories": [
-    "Other",
-    "Debuggers"
-  ],
-  "activationEvents": [
-    "*"
-  ],
+  "categories": ["Other", "Debuggers"],
+  "activationEvents": ["*"],
   "main": "./out/extension",
   "contributes": {
     "jsonValidation": [

@@ -1,14 +1,6 @@
 'use strict'
 import * as vscode from 'vscode'
 
-const showErrorMessage = (message: string): void => {
-  vscode.window.showErrorMessage(`AutoLaunch: ${message}`)
-}
-
-const showWarningMessage = (message: string): void => {
-  vscode.window.showWarningMessage(`AutoLaunch: ${message}`)
-}
-
 export function activate(context: vscode.ExtensionContext) {
   if (legacyAutoLaunch()) return
   vscode.workspace.workspaceFolders.forEach(workspaceFolder => {
@@ -26,7 +18,7 @@ function runTasks(workspaceFolder: vscode.WorkspaceFolder) {
         if (name) {
           vscode.commands.executeCommand('workbench.action.tasks.runTask', name)
         } else {
-          showErrorMessage('tasks.json: the property "label" must be defined.')
+          vscode.window.showErrorMessage('tasks.json: the property "label" must be defined.')
         }
       }
     })
@@ -44,7 +36,7 @@ function launchConfigurations(workspaceFolder: vscode.WorkspaceFolder) {
         if (name) {
           vscode.debug.startDebugging(workspaceFolder, name)
         } else {
-          showErrorMessage('launch.json: the property "name" must be defined.')
+          vscode.window.showErrorMessage('launch.json: the property "name" must be defined.')
         }
       }
     })
@@ -55,6 +47,14 @@ function launchConfigurations(workspaceFolder: vscode.WorkspaceFolder) {
 interface AutoLaunch {
   type: string
   name: string
+}
+
+const showErrorMessage = (message: string): void => {
+  vscode.window.showErrorMessage(message)
+}
+
+const showWarningMessage = (message: string): void => {
+  vscode.window.showWarningMessage(message)
 }
 
 function legacyAutoLaunch() {
