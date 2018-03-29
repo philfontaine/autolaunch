@@ -4,7 +4,7 @@
   "description": "Automatically run tasks in tasks.json or launch config in launch.json",
   "version": "1.2.0",
   "keywords": ["auto", "run", "launch", "tasks", "debug"],
-  "icon": "./logo/AutoLaunch128.png",
+  "icon": "logo/AutoLaunch128.png",
   "galleryBanner": {
     "color": "#add8e6",
     "theme": "light"
