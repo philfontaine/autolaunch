@@ -58,6 +58,7 @@ Configurations must be defined in `launch.json`. They must have the `name` prope
 ## Known Issues
 
 * VS Code will warn that "Property auto is not allowed". Waiting for this [issue](https://github.com/Microsoft/vscode/issues/20193).
+* Workspace folders: For tasks only: avoid `label` naming collisions between multiple folders, as VS Code simply loops through the folders and finds the first matching `label`.
 
 ## Links
 
