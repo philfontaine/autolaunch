@@ -11,7 +11,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 function runTasks(workspaceFolder: vscode.WorkspaceFolder) {
   const tasks = vscode.workspace.getConfiguration('tasks', workspaceFolder.uri).get('tasks')
-  if (tasks && Array.isArray(tasks)) {
+  if (Array.isArray(tasks)) {
     tasks.forEach(task => {
       if (task.auto === true) {
         const name = task.label || task.taskName
@@ -29,7 +29,7 @@ function launchConfigurations(workspaceFolder: vscode.WorkspaceFolder) {
   const configurations = vscode.workspace
     .getConfiguration('launch', workspaceFolder.uri)
     .get('configurations')
-  if (configurations && Array.isArray(configurations)) {
+  if (Array.isArray(configurations)) {
     configurations.forEach(configuration => {
       if (configuration.auto === true) {
         const name = configuration.name
