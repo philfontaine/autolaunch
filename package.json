@@ -3,7 +3,13 @@
   "displayName": "AutoLaunch",
   "description": "Automatically run tasks in tasks.json or launch config in launch.json",
   "version": "1.2.0",
-  "keywords": ["auto", "run", "launch", "tasks", "debug"],
+  "keywords": [
+    "auto",
+    "run",
+    "launch",
+    "tasks",
+    "debug"
+  ],
   "icon": "logo/AutoLaunch128.png",
   "galleryBanner": {
     "color": "#add8e6",
@@ -22,8 +28,13 @@
   "engines": {
     "vscode": "^1.17.0"
   },
-  "categories": ["Other", "Debuggers"],
-  "activationEvents": ["*"],
+  "categories": [
+    "Other",
+    "Debuggers"
+  ],
+  "activationEvents": [
+    "*"
+  ],
   "main": "./out/extension",
   "contributes": {
     "jsonValidation": [
@@ -35,7 +46,19 @@
         "fileMatch": "/.vscode/launch.json",
         "url": "./custom-launch-schema.json"
       }
-    ]
+    ],
+    "configuration": {
+			"type": "object",
+			"title": "AutoLaunch",
+			"properties": {
+				"autolaunch.promptBeforeLaunch": {
+					"scope": "workbench",
+					"type": "boolean",
+					"default": true,
+					"description": "Whether or not to be prompted before launching the tasks. Set it to true if you want to manually confirm the tasks launch."
+				}
+			}
+		}
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

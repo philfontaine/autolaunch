@@ -3,44 +3,79 @@ import * as vscode from 'vscode'
 
 export function activate(context: vscode.ExtensionContext) {
   if (legacyAutoLaunch()) return
-  vscode.workspace.workspaceFolders.forEach(workspaceFolder => {
-    runTasks(workspaceFolder)
-    launchConfigurations(workspaceFolder)
-  })
-}
 
-function runTasks(workspaceFolder: vscode.WorkspaceFolder) {
-  const tasks = vscode.workspace.getConfiguration('tasks', workspaceFolder.uri).get('tasks')
-  if (Array.isArray(tasks)) {
-    tasks.forEach(task => {
-      if (task.auto === true) {
-        const name = task.label || task.taskName
+  const promptUser = (names:string[]):Promise<void> => {
+    const promptBeforeLaunch: boolean = vscode.workspace.getConfiguration('autolaunch').get('promptBeforeLaunch')
+    if(promptBeforeLaunch !== true) {
+      return Promise.resolve()
+    } else {
+      return new Promise((resolve, reject) => {
+        const continueAutoLaunchingString: string = `Launch the tasks ${names.length ? `(${names.join(', ')})` : ''}`
+        vscode.window.showQuickPick([continueAutoLaunchingString, 'Don\'t launch the tasks']).then(selection => {
+          if (selection === continueAutoLaunchingString) {
+            resolve()
+          } else {
+            reject()
+          }
+        })
+      })
+    }
+  }
+
+
+  vscode.workspace.workspaceFolders.forEach(workspaceFolder => {
+    const tasks:string[] = getTasks(workspaceFolder)
+    const configurations:{workspaceFolder:vscode.WorkspaceFolder, name:string}[] = getConfigurations(workspaceFolder)
+    if(!tasks.length && !configurations.length) {
+      return
+    }
+    promptUser(tasks.concat(configurations.map(c => c.name)).filter(name => name !== undefined && name !== null)).then(():void => {
+      tasks.forEach((name:string):void => {
         if (name) {
           vscode.commands.executeCommand('workbench.action.tasks.runTask', name)
         } else {
           vscode.window.showErrorMessage('tasks.json: the property "label" must be defined.')
         }
+      })
+
+      configurations.forEach(({workspaceFolder, name}):void => {
+        if (name) {
+          vscode.debug.startDebugging(workspaceFolder, name)
+        } else {
+          vscode.window.showErrorMessage('launch.json: the property "name" must be defined.')
+        }
+      })
+    })
+  })
+}
+
+function getTasks(workspaceFolder: vscode.WorkspaceFolder): string[] {
+  const result:string[] = []
+  const tasks = vscode.workspace.getConfiguration('tasks', workspaceFolder.uri).get('tasks')
+  if (Array.isArray(tasks)) {
+    tasks.forEach(task => {
+      if (task.auto === true) {
+        const name = task.label || task.taskName
+        result.push(name || undefined)
       }
     })
   }
+  return result
 }
 
-function launchConfigurations(workspaceFolder: vscode.WorkspaceFolder) {
+function getConfigurations(workspaceFolder: vscode.WorkspaceFolder): {workspaceFolder:vscode.WorkspaceFolder, name:string}[] {
+  const result:{workspaceFolder:vscode.WorkspaceFolder, name:string}[] = []
   const configurations = vscode.workspace
     .getConfiguration('launch', workspaceFolder.uri)
     .get('configurations')
   if (Array.isArray(configurations)) {
     configurations.forEach(configuration => {
       if (configuration.auto === true) {
-        const name = configuration.name
-        if (name) {
-          vscode.debug.startDebugging(workspaceFolder, name)
-        } else {
-          vscode.window.showErrorMessage('launch.json: the property "name" must be defined.')
-        }
+        result.push({workspaceFolder, name: configuration.name})
       }
     })
   }
+  return result
 }
 
 /* LEGACY CODE, WILL BE REMOVED IN FUTURE RELEASES */

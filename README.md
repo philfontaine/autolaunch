@@ -51,6 +51,10 @@ Configurations must be defined in `launch.json`. They must have the `name` prope
 
 [`launch.json` syntax Reference](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations)
 
+## Settings
+
+Set `autolaunch.promptBeforeLaunch` it to `true` if you'd like to be prompted when the extension is about to automatically launch the tasks (default is `false`).
+
 ## Limitations
 
 * Configurations are launched in debug mode (same as 'Start Debugging' or F5)
