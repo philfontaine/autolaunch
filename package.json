@@ -20,7 +20,7 @@
   "publisher": "philfontaine",
   "license": "MIT",
   "engines": {
-    "vscode": "^1.17.0"
+    "vscode": "^1.24.0"
   },
   "categories": ["Other", "Debuggers"],
   "activationEvents": ["*"],
