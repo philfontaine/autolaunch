@@ -34,7 +34,7 @@ export function activate(context: vscode.ExtensionContext) {
           } else {
             promptMessage = `Launch configurations (${configurationsToLaunch.length})`
           }
-          promptMessage += ` in the workspace "${workspaceFolder.name}"?`
+          promptMessage += ` in the workspace folder "${workspaceFolder.name}"?`
           vscode.window.showInformationMessage(promptMessage, no, yes).then(result => {
             if (result === yes) {
               runTasks(tasksToRun, availableTasksPromise)

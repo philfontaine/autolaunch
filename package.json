@@ -2,7 +2,7 @@
   "name": "autolaunch",
   "displayName": "AutoLaunch",
   "description": "Automatically run tasks in tasks.json or launch config in launch.json",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "keywords": [
     "auto",
     "run",

@@ -1,8 +1,12 @@
 # Changelog
 
+### 2.0.2 (July 28, 2018)
+
+- Hotfix: Fixed the prompt message
+
 ### 2.0.1 (July 28, 2018)
 
-- Changed to a valid tsconfig target
+- Hotfix: Changed to a valid tsconfig target
 
 ### 2.0.0 (July 28, 2018)
 
