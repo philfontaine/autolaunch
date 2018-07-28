@@ -2,8 +2,14 @@
   "name": "autolaunch",
   "displayName": "AutoLaunch",
   "description": "Automatically run tasks in tasks.json or launch config in launch.json",
-  "version": "1.2.0",
-  "keywords": ["auto", "run", "launch", "tasks", "debug"],
+  "version": "2.0.0",
+  "keywords": [
+    "auto",
+    "run",
+    "launch",
+    "tasks",
+    "debug"
+  ],
   "icon": "logo/AutoLaunch128.png",
   "galleryBanner": {
     "color": "#add8e6",
@@ -20,10 +26,15 @@
   "publisher": "philfontaine",
   "license": "MIT",
   "engines": {
-    "vscode": "^1.17.0"
+    "vscode": "^1.24.0"
   },
-  "categories": ["Other", "Debuggers"],
-  "activationEvents": ["*"],
+  "categories": [
+    "Other",
+    "Debuggers"
+  ],
+  "activationEvents": [
+    "*"
+  ],
   "main": "./out/extension",
   "contributes": {
     "jsonValidation": [
@@ -34,6 +45,24 @@
       {
         "fileMatch": "/.vscode/launch.json",
         "url": "./custom-launch-schema.json"
+      }
+    ],
+    "configuration": [
+      {
+        "type": "object",
+        "title": "AutoLaunch configuration",
+        "properties": {
+          "autolaunch.mode": {
+            "type": "string",
+            "default": "auto",
+            "enum": [
+              "auto",
+              "prompt",
+              "disabled"
+            ],
+            "description": "AutoLaunch mode. Can be:\n  - 'auto': Automatically run tasks and launch configurations\n  - 'prompt': User will be prompted before AutoLaunching.\n  - 'disabled': Same as disabling the extension."
+          }
+        }
       }
     ]
   },

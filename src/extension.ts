@@ -1,31 +1,74 @@
 'use strict'
 import * as vscode from 'vscode'
 
+const yes = 'Yes'
+const no = 'No'
+
+interface ItemToLaunch {
+  name: string
+  workspaceFolder: vscode.WorkspaceFolder
+}
+
 export function activate(context: vscode.ExtensionContext) {
-  if (legacyAutoLaunch()) return
+  const availableTasksPromise = vscode.tasks.fetchTasks()
   vscode.workspace.workspaceFolders.forEach(workspaceFolder => {
-    runTasks(workspaceFolder)
-    launchConfigurations(workspaceFolder)
+    const mode: string = vscode.workspace
+      .getConfiguration('autolaunch', workspaceFolder.uri)
+      .get('mode')
+    if (mode === 'auto' || mode === 'prompt') {
+      const tasksToRun = getTasksToRun(workspaceFolder)
+      const configurationsToLaunch = getConfigurationsToLaunch(workspaceFolder)
+
+      if (tasksToRun.length || configurationsToLaunch.length) {
+        if (mode === 'auto') {
+          runTasks(tasksToRun, availableTasksPromise)
+          launchConfigurations(configurationsToLaunch)
+        } else {
+          let promptMessage: string
+          if (tasksToRun.length && configurationsToLaunch.length) {
+            promptMessage = `Run tasks (${tasksToRun.length}) and launch configurations (${
+              configurationsToLaunch.length
+            })`
+          } else if (tasksToRun.length) {
+            promptMessage = `Run tasks (${tasksToRun.length})`
+          } else {
+            promptMessage = `Launch configurations (${configurationsToLaunch.length})`
+          }
+          promptMessage += ` in the workspace "${workspaceFolder.name}"?`
+          vscode.window.showInformationMessage(promptMessage, no, yes).then(result => {
+            if (result === yes) {
+              runTasks(tasksToRun, availableTasksPromise)
+              launchConfigurations(configurationsToLaunch)
+            }
+          })
+        }
+      }
+    } else if (mode !== 'disabled') {
+      vscode.window.showErrorMessage(`Unknown value "${mode}" for property autolaunch.mode`)
+    }
   })
 }
 
-function runTasks(workspaceFolder: vscode.WorkspaceFolder) {
+function getTasksToRun(workspaceFolder: vscode.WorkspaceFolder): ItemToLaunch[] {
+  const tasksToRun: ItemToLaunch[] = []
   const tasks = vscode.workspace.getConfiguration('tasks', workspaceFolder.uri).get('tasks')
   if (Array.isArray(tasks)) {
     tasks.forEach(task => {
       if (task.auto === true) {
         const name = task.label || task.taskName
         if (name) {
-          vscode.commands.executeCommand('workbench.action.tasks.runTask', name)
+          tasksToRun.push({ name, workspaceFolder })
         } else {
           vscode.window.showErrorMessage('tasks.json: the property "label" must be defined.')
         }
       }
     })
   }
+  return tasksToRun
 }
 
-function launchConfigurations(workspaceFolder: vscode.WorkspaceFolder) {
+function getConfigurationsToLaunch(workspaceFolder: vscode.WorkspaceFolder): ItemToLaunch[] {
+  const configurationsToLaunch: ItemToLaunch[] = []
   const configurations = vscode.workspace
     .getConfiguration('launch', workspaceFolder.uri)
     .get('configurations')
@@ -34,75 +77,41 @@ function launchConfigurations(workspaceFolder: vscode.WorkspaceFolder) {
       if (configuration.auto === true) {
         const name = configuration.name
         if (name) {
-          vscode.debug.startDebugging(workspaceFolder, name)
+          configurationsToLaunch.push({ name, workspaceFolder })
         } else {
           vscode.window.showErrorMessage('launch.json: the property "name" must be defined.')
         }
       }
     })
   }
+  return configurationsToLaunch
 }
 
-/* LEGACY CODE, WILL BE REMOVED IN FUTURE RELEASES */
-interface AutoLaunch {
-  type: string
-  name: string
-}
-
-const showErrorMessage = (message: string): void => {
-  vscode.window.showErrorMessage(message)
-}
-
-const showWarningMessage = (message: string): void => {
-  vscode.window.showWarningMessage(message)
-}
-
-function legacyAutoLaunch() {
-  let usingLegacy: boolean
-  const autolaunchArray: ReadonlyArray<AutoLaunch> = vscode.workspace
-    .getConfiguration('autolaunch')
-    .get('config')
-  if (autolaunchArray) {
-    usingLegacy = true
-    showWarningMessage(
-      "autolaunch.config configuration is DEPRECATED. See the extension's README for more details."
-    )
-    if (Array.isArray(autolaunchArray)) {
-      autolaunchArray.forEach(autolaunch => {
-        const { name, type } = autolaunch
-        if (name) {
-          switch (type) {
-            case 'task':
-              vscode.commands.executeCommand('workbench.action.tasks.runTask', name)
-              break
-            case 'launch':
-              vscode.debug
-                .startDebugging(vscode.workspace.workspaceFolders[0], name)
-                .then(null, reason => {
-                  showErrorMessage(reason)
-                })
-              break
-            default:
-              if (type) {
-                showErrorMessage(
-                  `Unknown value for property "type": "${type}". Supported values are "task" and "launch".`
-                )
-              } else {
-                showErrorMessage('Property "type" must be defined')
-              }
-              break
-          }
-        } else {
-          showErrorMessage('Property "name" must be defined')
-        }
-      })
-    } else {
-      showErrorMessage(
-        'Property "autolaunch.config" must be an Array of {"type": "task" || "launch", "name": string }'
+/* any[] is to prevent an error with typescript which I don't understand */
+function runTasks(tasksToRun: ItemToLaunch[], availableTasksPromise: Thenable<any[]>) {
+  availableTasksPromise.then(availableTasks => {
+    tasksToRun.forEach(taskToRun => {
+      const task = availableTasks.find(
+        task =>
+          task.name === taskToRun.name &&
+          task.scope &&
+          task.scope.name === taskToRun.workspaceFolder.name
       )
-    }
-  } else {
-    usingLegacy = false
-  }
-  return usingLegacy
+      if (task) {
+        vscode.tasks.executeTask(task)
+      } else {
+        vscode.window.showErrorMessage(
+          `An error occured while trying to AutoLaunch the task "${
+            taskToRun.name
+          }". Please make sure the task is properly configured.`
+        )
+      }
+    })
+  })
+}
+
+function launchConfigurations(configurationsToLaunch: ItemToLaunch[]) {
+  configurationsToLaunch.forEach(configurationToLaunch => {
+    vscode.debug.startDebugging(configurationToLaunch.workspaceFolder, configurationToLaunch.name)
+  })
 }
