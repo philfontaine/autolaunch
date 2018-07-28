@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.0.1 (July 28, 2018)
+
+- Changed to a valid tsconfig target
+
 ### 2.0.0 (July 28, 2018)
 
 - Updated to the new vscode Task API that landed in 1.24. Closes [#5](https://github.com/philfontaine/autolaunch/issues/5) and Fixes [#4](https://github.com/philfontaine/autolaunch/issues/4)
