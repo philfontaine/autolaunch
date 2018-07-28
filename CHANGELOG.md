@@ -4,6 +4,7 @@
 
 - Updated to the new vscode Task API that landed in 1.24. Closes [#5](https://github.com/philfontaine/autolaunch/issues/5) and Fixes [#4](https://github.com/philfontaine/autolaunch/issues/4)
 - Allow user to be prompted before AutoLaunching. Closes [#6](https://github.com/philfontaine/autolaunch/issues/6)
+- Completely removed support for versions prior to 1.0.0
 
 ### 1.2.0 (March 29, 2018)
 

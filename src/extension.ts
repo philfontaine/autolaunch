@@ -54,7 +54,7 @@ function getTasksToRun(workspaceFolder: vscode.WorkspaceFolder): ItemToLaunch[] 
   const tasks = vscode.workspace.getConfiguration('tasks', workspaceFolder.uri).get('tasks')
   if (Array.isArray(tasks)) {
     tasks.forEach(task => {
-      if (task.auto) {
+      if (task.auto === true) {
         const name = task.label || task.taskName
         if (name) {
           tasksToRun.push({ name, workspaceFolder })
@@ -74,7 +74,7 @@ function getConfigurationsToLaunch(workspaceFolder: vscode.WorkspaceFolder): Ite
     .get('configurations')
   if (Array.isArray(configurations)) {
     configurations.forEach(configuration => {
-      if (configuration.auto) {
+      if (configuration.auto === true) {
         const name = configuration.name
         if (name) {
           configurationsToLaunch.push({ name, workspaceFolder })
