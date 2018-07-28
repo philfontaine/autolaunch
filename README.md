@@ -51,6 +51,15 @@ Configurations must be defined in `launch.json`. They must have the `name` prope
 
 [`launch.json` syntax Reference](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations)
 
+## Modes
+
+v2.0.0 introduces modes that can change the behaviour of AutoLaunch. The possible modes are:
+- `auto`: Will AutoLaunch directly as expected.
+- `prompt`: Will prompt the user to AutoLaunch or not. This is useful in the case where you want to open a folder to simply look at it.
+- `disabled`: Same as disabling the extension.
+
+The mode can be changed in the settings: `autolaunch.mode`
+
 ## Limitations
 
 * Configurations are launched in debug mode (same as 'Start Debugging' or F5)
@@ -58,7 +67,6 @@ Configurations must be defined in `launch.json`. They must have the `name` prope
 ## Known Issues
 
 * VS Code will warn that "Property auto is not allowed". Waiting for this [issue](https://github.com/Microsoft/vscode/issues/20193).
-* Workspace folders: For tasks only: avoid `label` naming collisions between multiple folders, as VS Code simply loops through the folders and finds the first matching `label`.
 
 ## Links
 

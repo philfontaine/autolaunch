@@ -26,11 +26,13 @@ export function activate(context: vscode.ExtensionContext) {
         } else {
           let promptMessage: string
           if (tasksToRun.length && configurationsToLaunch.length) {
-            promptMessage = `Run tasks (${tasksToRun.length}) and launch configurations (${configurationsToLaunch.length})`
+            promptMessage = `Run tasks (${tasksToRun.length}) and launch configurations (${
+              configurationsToLaunch.length
+            })`
           } else if (tasksToRun.length) {
             promptMessage = `Run tasks (${tasksToRun.length})`
           } else {
-            promptMessage = `Launch configurations (${tasksToRun.length})`
+            promptMessage = `Launch configurations (${configurationsToLaunch.length})`
           }
           promptMessage += ` in the workspace "${workspaceFolder.name}"?`
           vscode.window.showInformationMessage(promptMessage, no, yes).then(result => {
@@ -55,7 +57,7 @@ function getTasksToRun(workspaceFolder: vscode.WorkspaceFolder): ItemToLaunch[] 
       if (task.auto) {
         const name = task.label || task.taskName
         if (name) {
-          tasksToRun.push({ name: name, workspaceFolder: workspaceFolder })
+          tasksToRun.push({ name, workspaceFolder })
         } else {
           vscode.window.showErrorMessage('tasks.json: the property "label" must be defined.')
         }
@@ -75,7 +77,7 @@ function getConfigurationsToLaunch(workspaceFolder: vscode.WorkspaceFolder): Ite
       if (configuration.auto) {
         const name = configuration.name
         if (name) {
-          configurationsToLaunch.push({ name: name, workspaceFolder: workspaceFolder })
+          configurationsToLaunch.push({ name, workspaceFolder })
         } else {
           vscode.window.showErrorMessage('launch.json: the property "name" must be defined.')
         }
@@ -99,9 +101,9 @@ function runTasks(tasksToRun: ItemToLaunch[], availableTasksPromise: Thenable<an
         vscode.tasks.executeTask(task)
       } else {
         vscode.window.showErrorMessage(
-          `An error occured while trying to AutoLaunch the task '${
+          `An error occured while trying to AutoLaunch the task "${
             taskToRun.name
-          }'. Please make sure the task is properly configured.`
+          }". Please make sure the task is properly configured.`
         )
       }
     })
