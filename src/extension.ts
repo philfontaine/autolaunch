@@ -6,7 +6,8 @@ const no = 'No'
 
 interface ItemToLaunch {
   name: string
-  workspaceFolder: vscode.WorkspaceFolder
+  workspaceFolder: vscode.WorkspaceFolder,
+  order?: number
 }
 
 export function activate(context: vscode.ExtensionContext) {
@@ -90,6 +91,11 @@ function getConfigurationsToLaunch(workspaceFolder: vscode.WorkspaceFolder): Ite
 /* any[] is to prevent an error with typescript which I don't understand */
 function runTasks(tasksToRun: ItemToLaunch[], availableTasksPromise: Thenable<any[]>) {
   availableTasksPromise.then(availableTasks => {
+    tasksToRun.sort((task1, task2) => {
+      if(task1.order && task2.order){
+        return task1.order - task2.order;
+      }
+    })
     tasksToRun.forEach(taskToRun => {
       const task = availableTasks.find(
         task =>
