@@ -1,5 +1,10 @@
 # Changelog
 
+### 2.0.3 (November 30, 2019)
+
+- Updated readme, dependencies, changelog
+- Bugfix: Fix a bug when no folder was opened at startup
+
 ### 2.0.2 (July 28, 2018)
 
 - Hotfix: Fixed the prompt message

@@ -4,6 +4,8 @@ AutoLaunch will automatically run a task in "tasks.json" or launch a configurati
 
 Simply add `"auto": true` in the task or configuration you want to AutoLaunch!
 
+> For tasks, this feature is now [built-in](https://code.visualstudio.com/docs/editor/tasks#_run-behavior) into VS Code (since 1.30), so you might want to check that out instead.
+
 tasks.json example:
 
 ```json
@@ -54,7 +56,7 @@ Configurations must be defined in `launch.json`. They must have the `name` prope
 ## Modes
 
 v2.0.0 introduces modes that can change the behaviour of AutoLaunch. The possible modes are:
-- `auto`: Will AutoLaunch directly as expected.
+- `auto`: Will AutoLaunch directly as expected (default mode).
 - `prompt`: Will prompt the user to AutoLaunch or not. This is useful in the case where you want to open a folder to simply look at it.
 - `disabled`: Same as disabling the extension.
 
@@ -66,7 +68,7 @@ The mode can be changed in the settings: `autolaunch.mode`
 
 ## Known Issues
 
-* VS Code will warn that "Property auto is not allowed". Waiting for this [issue](https://github.com/Microsoft/vscode/issues/20193).
+* VS Code will warn that "Property auto is not allowed". Waiting for this [issue](https://github.com/Microsoft/vscode/issues/20193), but it looks like this might never get fixed.
 
 ## Links
 

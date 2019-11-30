@@ -10,6 +10,8 @@ interface ItemToLaunch {
 }
 
 export function activate(context: vscode.ExtensionContext) {
+  if (!vscode.workspace.workspaceFolders) return
+
   const availableTasksPromise = vscode.tasks.fetchTasks()
   vscode.workspace.workspaceFolders.forEach(workspaceFolder => {
     const mode: string = vscode.workspace
@@ -26,9 +28,7 @@ export function activate(context: vscode.ExtensionContext) {
         } else {
           let promptMessage: string
           if (tasksToRun.length && configurationsToLaunch.length) {
-            promptMessage = `Run tasks (${tasksToRun.length}) and launch configurations (${
-              configurationsToLaunch.length
-            })`
+            promptMessage = `Run tasks (${tasksToRun.length}) and launch configurations (${configurationsToLaunch.length})`
           } else if (tasksToRun.length) {
             promptMessage = `Run tasks (${tasksToRun.length})`
           } else {
@@ -87,23 +87,20 @@ function getConfigurationsToLaunch(workspaceFolder: vscode.WorkspaceFolder): Ite
   return configurationsToLaunch
 }
 
-/* any[] is to prevent an error with typescript which I don't understand */
-function runTasks(tasksToRun: ItemToLaunch[], availableTasksPromise: Thenable<any[]>) {
+function runTasks(tasksToRun: ItemToLaunch[], availableTasksPromise: Thenable<vscode.Task[]>) {
   availableTasksPromise.then(availableTasks => {
     tasksToRun.forEach(taskToRun => {
       const task = availableTasks.find(
         task =>
           task.name === taskToRun.name &&
           task.scope &&
-          task.scope.name === taskToRun.workspaceFolder.name
+          (task.scope as vscode.WorkspaceFolder).name === taskToRun.workspaceFolder.name
       )
       if (task) {
         vscode.tasks.executeTask(task)
       } else {
         vscode.window.showErrorMessage(
-          `An error occured while trying to AutoLaunch the task "${
-            taskToRun.name
-          }". Please make sure the task is properly configured.`
+          `An error occured while trying to AutoLaunch the task "${taskToRun.name}". Please make sure the task is properly configured.`
         )
       }
     })
