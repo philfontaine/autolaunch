@@ -1,5 +1,22 @@
 # Changelog
 
+### 2.0.9 (June 6, 2011)
+
+- Forgot to update Changelog before publishing 2.0.8
+
+### 2.0.8 (June 6, 2011)
+
+- Updated project and dependencies
+- Optimized activation events (so that AutoLaunch does not slow down startup when opening folders that don't have tasks.json or launch.json)
+
+### 2.0.7 (June 6, 2021)
+
+- Revert 2.0.4-2.0.6
+
+### 2.0.4 - 2.0.6 (June 5-6, 2021)
+
+- Broken extension due to bad update.
+
 ### 2.0.3 (November 30, 2019)
 
 - Updated readme, dependencies, changelog
