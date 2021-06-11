@@ -37,7 +37,7 @@
     "workspaceContains:.vscode/launch.json",
     "onStartupFinished"
   ],
-  "main": "./out/extension",
+  "main": "./out/extension.js",
   "contributes": {
     "jsonValidation": [
       {
