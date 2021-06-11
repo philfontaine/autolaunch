@@ -33,7 +33,9 @@
     "Debuggers"
   ],
   "activationEvents": [
-    "*"
+    "workspaceContains:.vscode/tasks.json",
+    "workspaceContains:.vscode/launch.json",
+    "onStartupFinished"
   ],
   "main": "./out/extension",
   "contributes": {
