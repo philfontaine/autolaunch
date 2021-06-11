@@ -13,7 +13,7 @@ export function activate(context: vscode.ExtensionContext) {
   if (!vscode.workspace.workspaceFolders) return
 
   const availableTasksPromise = vscode.tasks.fetchTasks()
-  vscode.workspace.workspaceFolders.forEach(workspaceFolder => {
+  vscode.workspace.workspaceFolders.forEach((workspaceFolder) => {
     const mode: string = vscode.workspace
       .getConfiguration('autolaunch', workspaceFolder.uri)
       .get('mode')
@@ -35,7 +35,7 @@ export function activate(context: vscode.ExtensionContext) {
             promptMessage = `Launch configurations (${configurationsToLaunch.length})`
           }
           promptMessage += ` in the workspace folder "${workspaceFolder.name}"?`
-          vscode.window.showInformationMessage(promptMessage, no, yes).then(result => {
+          vscode.window.showInformationMessage(promptMessage, no, yes).then((result) => {
             if (result === yes) {
               runTasks(tasksToRun, availableTasksPromise)
               launchConfigurations(configurationsToLaunch)
@@ -53,7 +53,7 @@ function getTasksToRun(workspaceFolder: vscode.WorkspaceFolder): ItemToLaunch[] 
   const tasksToRun: ItemToLaunch[] = []
   const tasks = vscode.workspace.getConfiguration('tasks', workspaceFolder.uri).get('tasks')
   if (Array.isArray(tasks)) {
-    tasks.forEach(task => {
+    tasks.forEach((task) => {
       if (task.auto === true) {
         const name = task.label || task.taskName
         if (name) {
@@ -73,7 +73,7 @@ function getConfigurationsToLaunch(workspaceFolder: vscode.WorkspaceFolder): Ite
     .getConfiguration('launch', workspaceFolder.uri)
     .get('configurations')
   if (Array.isArray(configurations)) {
-    configurations.forEach(configuration => {
+    configurations.forEach((configuration) => {
       if (configuration.auto === true) {
         const name = configuration.name
         if (name) {
@@ -88,10 +88,10 @@ function getConfigurationsToLaunch(workspaceFolder: vscode.WorkspaceFolder): Ite
 }
 
 function runTasks(tasksToRun: ItemToLaunch[], availableTasksPromise: Thenable<vscode.Task[]>) {
-  availableTasksPromise.then(availableTasks => {
-    tasksToRun.forEach(taskToRun => {
+  availableTasksPromise.then((availableTasks) => {
+    tasksToRun.forEach((taskToRun) => {
       const task = availableTasks.find(
-        task =>
+        (task) =>
           task.name === taskToRun.name &&
           task.scope &&
           (task.scope as vscode.WorkspaceFolder).name === taskToRun.workspaceFolder.name
@@ -108,7 +108,7 @@ function runTasks(tasksToRun: ItemToLaunch[], availableTasksPromise: Thenable<vs
 }
 
 function launchConfigurations(configurationsToLaunch: ItemToLaunch[]) {
-  configurationsToLaunch.forEach(configurationToLaunch => {
+  configurationsToLaunch.forEach((configurationToLaunch) => {
     vscode.debug.startDebugging(configurationToLaunch.workspaceFolder, configurationToLaunch.name)
   })
 }
