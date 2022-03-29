@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.1.1 (March 28, 2022)
+
+- Fixed: user level tasks were failing silently if the file had comments (now parsing with JSON5)
+
 ### 2.1.0 (March 28, 2022)
 
 - Added support for [user level tasks](https://code.visualstudio.com/docs/editor/tasks#_user-level-tasks)
