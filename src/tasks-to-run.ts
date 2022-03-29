@@ -26,7 +26,7 @@ export async function getUserTasksToRun(globalPath: string): Promise<UserTaskToR
 
   const tasksFile = path.join(globalPath, 'tasks.json')
 
-  const tasks = await new Promise((resolve, reject) => {
+  const tasks = await new Promise((resolve) => {
     fs.readFile(tasksFile, 'utf8', (err, data) => {
       if (err) {
         resolve(undefined)
