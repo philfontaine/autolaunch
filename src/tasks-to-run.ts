@@ -2,6 +2,7 @@ import * as path from 'path'
 import * as fs from 'fs'
 import { WorkspaceFolder, workspace, window } from 'vscode'
 import { UserTaskToRun, WorkspaceTaskToRun } from './types'
+import * as JSON5 from 'json5';
 
 export function getWorkspaceTasksToRun(workspaceFolder: WorkspaceFolder): WorkspaceTaskToRun[] {
   const tasksToRun: WorkspaceTaskToRun[] = []
@@ -31,7 +32,12 @@ export async function getUserTasksToRun(globalPath: string): Promise<UserTaskToR
       if (err) {
         resolve(undefined)
       } else {
-        resolve(JSON.parse(data)?.tasks)
+        try {
+          const json = JSON5.parse(data)
+          resolve(json?.tasks)
+        } catch (error) {
+          resolve(undefined)
+        }
       }
     })
   })

@@ -78,6 +78,9 @@
     "watch": "tsc -watch -p ./",
     "lint": "eslint src --ext ts"
   },
+  "dependencies": {
+    "json5": "2.2.1"
+  },
   "devDependencies": {
     "@types/node": "17.0.23",
     "eslint": "8.12.0",
