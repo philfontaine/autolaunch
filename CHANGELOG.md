@@ -1,10 +1,15 @@
 # Changelog
 
-### 2.0.9 (June 6, 2011)
+### 2.1.0 (March 28, 2022)
+
+- Added support for [user level tasks](https://code.visualstudio.com/docs/editor/tasks#_user-level-tasks)
+- Improved the prompt message (now showing the tasks/configurations name instead of the task/configuration count)
+
+### 2.0.9 (June 6, 2021)
 
 - Forgot to update Changelog before publishing 2.0.8
 
-### 2.0.8 (June 6, 2011)
+### 2.0.8 (June 6, 2021)
 
 - Updated project and dependencies
 - Optimized activation events (so that AutoLaunch does not slow down startup when opening folders that don't have tasks.json or launch.json)

@@ -45,13 +45,15 @@ launch.json example:
 
 Tasks must be defined in `tasks.json`. They must have the `label` or `taskName` properties defined. `taskName` is deprecated by VS Code but still supported by the extension.
 
-[`tasks.json` syntax Reference](https://code.visualstudio.com/docs/editor/tasks)
+[`tasks.json` syntax reference](https://code.visualstudio.com/docs/editor/tasks)
+
+> Since 2.1.0, [user level tasks](https://code.visualstudio.com/docs/editor/tasks#_user-level-tasks) can also be autolaunched.
 
 ### Configurations
 
 Configurations must be defined in `launch.json`. They must have the `name` property defined.
 
-[`launch.json` syntax Reference](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations)
+[`launch.json` syntax reference](https://code.visualstudio.com/docs/editor/debugging#_launch-configurations)
 
 ## Modes
 
@@ -68,7 +70,7 @@ The mode can be changed in the settings: `autolaunch.mode`
 
 ## Known Issues
 
-* VS Code will warn that "Property auto is not allowed". Waiting for this [issue](https://github.com/Microsoft/vscode/issues/20193), but it looks like this might never get fixed.
+* VS Code will warn that "Property auto is not allowed" on tasks.
 
 ## Links
 
