@@ -1,20 +1,33 @@
-import * as path from 'path'
 import * as fs from 'fs'
-import { WorkspaceFolder, workspace, window } from 'vscode'
-import { UserTaskToRun, WorkspaceTaskToRun } from './types'
-import * as JSON5 from 'json5';
+import * as JSON5 from 'json5'
+import * as path from 'path'
+import { Task, TaskScope, workspace, WorkspaceFolder } from 'vscode'
+import { showErrorUserTaskMissingLabel } from './errors'
+import { TaskToRun } from './types'
 
-export function getWorkspaceTasksToRun(workspaceFolder: WorkspaceFolder): WorkspaceTaskToRun[] {
-  const tasksToRun: WorkspaceTaskToRun[] = []
-  const tasks = workspace.getConfiguration('tasks', workspaceFolder.uri).get('tasks')
-  if (Array.isArray(tasks)) {
-    tasks.forEach((task) => {
-      if (task.auto === true) {
-        const name = task.label || task.taskName
-        if (name) {
-          tasksToRun.push({ name, workspaceFolder })
-        } else {
-          window.showErrorMessage('tasks.json: the property "label" must be defined.')
+export function getWorkspaceTasksToRun(
+  workspaceFolder: WorkspaceFolder,
+  availableTasks: Task[]
+): TaskToRun[] {
+  const tasksToRun: TaskToRun[] = []
+  const taskDefinitions = workspace.getConfiguration('tasks', workspaceFolder).get('tasks')
+  if (Array.isArray(taskDefinitions)) {
+    taskDefinitions.forEach((taskDefinition) => {
+      if (taskDefinition.auto === true) {
+        const name: string | undefined = taskDefinition.label || taskDefinition.taskName
+        if (typeof name !== 'string') {
+          // Don't need to warn. The task is not correctly defined so the user is already
+          // presented with an error in the Problems panel.
+          return
+        }
+        const task = availableTasks.find(
+          (task) =>
+            task.name === name &&
+            typeof task.scope === 'object' &&
+            (task.scope as WorkspaceFolder).name === workspaceFolder.name
+        )
+        if (task) {
+          tasksToRun.push({ name, task })
         }
       }
     })
@@ -22,12 +35,15 @@ export function getWorkspaceTasksToRun(workspaceFolder: WorkspaceFolder): Worksp
   return tasksToRun
 }
 
-export async function getUserTasksToRun(globalPath: string): Promise<UserTaskToRun[]> {
-  const tasksToRun: UserTaskToRun[] = []
+export async function getUserTasksToRun(
+  globalPath: string,
+  availableTasks: Task[]
+): Promise<TaskToRun[]> {
+  const tasksToRun: TaskToRun[] = []
 
   const tasksFile = path.join(globalPath, 'tasks.json')
 
-  const tasks = await new Promise((resolve) => {
+  const taskDefinitions = await new Promise((resolve) => {
     fs.readFile(tasksFile, 'utf8', (err, data) => {
       if (err) {
         resolve(undefined)
@@ -42,14 +58,24 @@ export async function getUserTasksToRun(globalPath: string): Promise<UserTaskToR
     })
   })
 
-  if (Array.isArray(tasks)) {
-    tasks.forEach((task) => {
-      if (task.auto === true) {
-        const name: string | undefined = task.label || task.taskName
-        if (name) {
-          tasksToRun.push({ name })
-        } else {
-          window.showErrorMessage('tasks.json: the property "label" must be defined.')
+  if (Array.isArray(taskDefinitions)) {
+    taskDefinitions.forEach((taskDefinition) => {
+      if (taskDefinition.auto === true) {
+        const name: string | undefined = taskDefinition.label || taskDefinition.taskName
+        if (typeof name !== 'string') {
+          // Since we are reading the tasks.json file manually, we don't have access to
+          // inferred labels (ex: if the type is "npm" and the script is "build", the inferred
+          // label is "npm: build"). So, even though the task is correctly defined, we have
+          // to show an error message to the user saying that the label property must be
+          // explicitly defined. Otherwise, we don't know how to map to the correct task.
+          showErrorUserTaskMissingLabel()
+          return
+        }
+        const task = availableTasks.find(
+          (task) => task.name === name && task.scope === TaskScope.Workspace
+        )
+        if (task) {
+          tasksToRun.push({ name, task })
         }
       }
     })

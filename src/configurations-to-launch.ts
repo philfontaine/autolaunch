@@ -1,22 +1,19 @@
-import { window, workspace, WorkspaceFolder } from 'vscode'
-import { WorkspaceConfigurationToLaunch } from './types'
+import { workspace, WorkspaceFolder } from 'vscode'
+import { ConfigurationToLaunch } from './types'
 
 export function getWorkspaceConfigurationsToLaunch(
   workspaceFolder: WorkspaceFolder
-): WorkspaceConfigurationToLaunch[] {
-  const configurationsToLaunch: WorkspaceConfigurationToLaunch[] = []
-  const configurations = workspace
-    .getConfiguration('launch', workspaceFolder.uri)
-    .get('configurations')
+): ConfigurationToLaunch[] {
+  const configurationsToLaunch: ConfigurationToLaunch[] = []
+  const configurations = workspace.getConfiguration('launch', workspaceFolder).get('configurations')
   if (Array.isArray(configurations)) {
     configurations.forEach((configuration) => {
       if (configuration.auto === true) {
-        const name = configuration.name
-        if (name) {
-          configurationsToLaunch.push({ name, workspaceFolder })
-        } else {
-          window.showErrorMessage('launch.json: the property "name" must be defined.')
+        const name: string | undefined = configuration.name
+        if (typeof name !== 'string') {
+          return
         }
+        configurationsToLaunch.push({ name, workspaceFolder })
       }
     })
   }
