@@ -26,7 +26,7 @@ function autolaunchWorkspaceTasksAndConfigurations(
   workspaceFolder: WorkspaceFolder,
   availableTasks: Task[]
 ) {
-  const mode: string = workspace.getConfiguration('autolaunch', workspaceFolder.uri).get('mode')
+  const mode: string = workspace.getConfiguration('autolaunch', workspaceFolder).get('mode')
   if (mode === 'auto' || mode === 'prompt') {
     const tasksToRun = getWorkspaceTasksToRun(workspaceFolder, availableTasks)
     const configurationsToLaunch = getWorkspaceConfigurationsToLaunch(workspaceFolder)
