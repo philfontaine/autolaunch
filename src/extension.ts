@@ -1,40 +1,39 @@
-'use strict'
-import * as vscode from 'vscode'
 import * as path from 'path'
-import { getUserTasksToRun, getWorkspaceTasksToRun } from './tasks-to-run'
+import { ExtensionContext, Task, tasks, window, workspace, WorkspaceFolder } from 'vscode'
 import { getWorkspaceConfigurationsToLaunch } from './configurations-to-launch'
-import { runUserTasks, runWorkspaceTasks } from './run-tasks'
+import { showErrorUnknownMode } from './errors'
 import { launchConfigurations } from './launch-configurations'
+import { runTasks } from './run-tasks'
+import { getUserTasksToRun, getWorkspaceTasksToRun } from './tasks-to-run'
 
 const yes = 'Yes'
 const no = 'No'
 
-export function activate(context: vscode.ExtensionContext) {
-  if (!vscode.workspace.workspaceFolders) return
+export async function activate(context: ExtensionContext) {
+  if (!workspace.workspaceFolders) return
+
+  const availableTasks = await tasks.fetchTasks()
+
+  workspace.workspaceFolders.forEach((workspaceFolder) => {
+    autolaunchWorkspaceTasksAndConfigurations(workspaceFolder, availableTasks)
+  })
 
   const globalPath = path.dirname(path.dirname(context.globalStorageUri.fsPath))
-
-  const availableTasksPromise = vscode.tasks.fetchTasks()
-  vscode.workspace.workspaceFolders.forEach((workspaceFolder) => {
-    autolaunchWorkspaceTasksAndConfigurations(workspaceFolder, availableTasksPromise)
-  })
-  autolaunchUserTaks(globalPath, availableTasksPromise)
+  autolaunchUserTasks(globalPath, availableTasks)
 }
 
 function autolaunchWorkspaceTasksAndConfigurations(
-  workspaceFolder: vscode.WorkspaceFolder,
-  availableTasksPromise: Thenable<vscode.Task[]>
+  workspaceFolder: WorkspaceFolder,
+  availableTasks: Task[]
 ) {
-  const mode: string = vscode.workspace
-    .getConfiguration('autolaunch', workspaceFolder.uri)
-    .get('mode')
+  const mode: string = workspace.getConfiguration('autolaunch', workspaceFolder.uri).get('mode')
   if (mode === 'auto' || mode === 'prompt') {
-    const tasksToRun = getWorkspaceTasksToRun(workspaceFolder)
+    const tasksToRun = getWorkspaceTasksToRun(workspaceFolder, availableTasks)
     const configurationsToLaunch = getWorkspaceConfigurationsToLaunch(workspaceFolder)
 
     if (tasksToRun.length || configurationsToLaunch.length) {
       if (mode === 'auto') {
-        runWorkspaceTasks(tasksToRun, availableTasksPromise)
+        runTasks(tasksToRun)
         launchConfigurations(configurationsToLaunch)
       } else {
         let promptMessage: string
@@ -52,40 +51,37 @@ function autolaunchWorkspaceTasksAndConfigurations(
             .join(', ')}]`
         }
         promptMessage += ` in the workspace folder "${workspaceFolder.name}"?`
-        vscode.window.showInformationMessage(promptMessage, no, yes).then((result) => {
+        window.showInformationMessage(promptMessage, yes, no).then((result) => {
           if (result === yes) {
-            runWorkspaceTasks(tasksToRun, availableTasksPromise)
+            runTasks(tasksToRun)
             launchConfigurations(configurationsToLaunch)
           }
         })
       }
     }
   } else if (mode !== 'disabled') {
-    vscode.window.showErrorMessage(`Unknown value "${mode}" for property autolaunch.mode`)
+    showErrorUnknownMode(mode)
   }
 }
 
-async function autolaunchUserTaks(
-  globalPath: string,
-  availableTasksPromise: Thenable<vscode.Task[]>
-) {
-  const mode: string = vscode.workspace.getConfiguration('autolaunch').get('mode')
+async function autolaunchUserTasks(globalPath: string, availableTasks: Task[]) {
+  const mode: string = workspace.getConfiguration('autolaunch').get('mode')
   if (mode === 'auto' || mode === 'prompt') {
-    const tasksToRun = await getUserTasksToRun(globalPath)
+    const tasksToRun = await getUserTasksToRun(globalPath, availableTasks)
 
     if (tasksToRun.length) {
       if (mode === 'auto') {
-        runUserTasks(tasksToRun, availableTasksPromise)
+        runTasks(tasksToRun)
       } else {
         const promptMessage = `Run user tasks [${tasksToRun.map((t) => t.name).join(', ')}]?`
-        vscode.window.showInformationMessage(promptMessage, no, yes).then((result) => {
+        window.showInformationMessage(promptMessage, yes, no).then((result) => {
           if (result === yes) {
-            runUserTasks(tasksToRun, availableTasksPromise)
+            runTasks(tasksToRun)
           }
         })
       }
     }
   } else if (mode !== 'disabled') {
-    vscode.window.showErrorMessage(`Unknown value "${mode}" for property autolaunch.mode`)
+    showErrorUnknownMode(mode)
   }
 }

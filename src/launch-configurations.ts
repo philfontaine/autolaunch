@@ -1,7 +1,7 @@
 import { debug } from 'vscode'
-import { WorkspaceConfigurationToLaunch } from './types'
+import { ConfigurationToLaunch } from './types'
 
-export function launchConfigurations(configurationsToLaunch: WorkspaceConfigurationToLaunch[]) {
+export function launchConfigurations(configurationsToLaunch: ConfigurationToLaunch[]) {
   configurationsToLaunch.forEach((configurationToLaunch) => {
     debug.startDebugging(configurationToLaunch.workspaceFolder, configurationToLaunch.name)
   })

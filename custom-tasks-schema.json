@@ -9,7 +9,7 @@
         "properties": {
           "auto": {
             "type": "boolean",
-            "description": "Whether this task will automatically run when VS Code starts.",
+            "description": "Whether this task will run automatically when VS Code starts.",
             "default": true
           }
         }

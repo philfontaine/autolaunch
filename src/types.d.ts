@@ -1,15 +1,11 @@
-import { WorkspaceFolder } from 'vscode'
+import { Task, WorkspaceFolder } from 'vscode'
 
-export interface WorkspaceTaskToRun {
+export interface TaskToRun {
   name: string
-  workspaceFolder: WorkspaceFolder
+  task: Task
 }
 
-export interface UserTaskToRun {
-  name: string
-}
-
-export interface WorkspaceConfigurationToLaunch {
+export interface ConfigurationToLaunch {
   name: string
   workspaceFolder: WorkspaceFolder
 }

@@ -9,7 +9,7 @@
         "properties": {
           "auto": {
             "type": "boolean",
-            "description": "Whether this configuration will automatically launch when VS Code starts.",
+            "description": "Whether this configuration will launch automatically when VS Code starts.",
             "default": true
           }
         }
