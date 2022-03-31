@@ -2,7 +2,7 @@ import * as fs from 'fs'
 import * as JSON5 from 'json5'
 import * as path from 'path'
 import { Task, TaskScope, workspace, WorkspaceFolder } from 'vscode'
-import { showErrorUserTaskMissingLabel } from './errors'
+import { logErrorTaskMissingLabel, logErrorUserTaskMissingLabel } from './logging'
 import { TaskToRun } from './types'
 
 export function getWorkspaceTasksToRun(
@@ -16,8 +16,7 @@ export function getWorkspaceTasksToRun(
       if (taskDefinition.auto === true) {
         const name: string | undefined = taskDefinition.label || taskDefinition.taskName
         if (typeof name !== 'string') {
-          // Don't need to warn. The task is not correctly defined so the user is already
-          // presented with an error in the Problems panel.
+          logErrorTaskMissingLabel(taskDefinition)
           return
         }
         const task = availableTasks.find(
@@ -63,12 +62,7 @@ export async function getUserTasksToRun(
       if (taskDefinition.auto === true) {
         const name: string | undefined = taskDefinition.label || taskDefinition.taskName
         if (typeof name !== 'string') {
-          // Since we are reading the tasks.json file manually, we don't have access to
-          // inferred labels (ex: if the type is "npm" and the script is "build", the inferred
-          // label is "npm: build"). So, even though the task is correctly defined, we have
-          // to show an error message to the user saying that the label property must be
-          // explicitly defined. Otherwise, we don't know how to map to the correct task.
-          showErrorUserTaskMissingLabel()
+          logErrorUserTaskMissingLabel(taskDefinition)
           return
         }
         const task = availableTasks.find(

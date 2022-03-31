@@ -1,7 +1,7 @@
 import * as path from 'path'
 import { ExtensionContext, Task, tasks, window, workspace, WorkspaceFolder } from 'vscode'
 import { getWorkspaceConfigurationsToLaunch } from './configurations-to-launch'
-import { showErrorUnknownMode } from './errors'
+import { logErrorUnknownMode } from './logging'
 import { launchConfigurations } from './launch-configurations'
 import { runTasks } from './run-tasks'
 import { getUserTasksToRun, getWorkspaceTasksToRun } from './tasks-to-run'
@@ -60,7 +60,7 @@ function autolaunchWorkspaceTasksAndConfigurations(
       }
     }
   } else if (mode !== 'disabled') {
-    showErrorUnknownMode(mode)
+    logErrorUnknownMode(mode)
   }
 }
 
@@ -82,6 +82,6 @@ async function autolaunchUserTasks(globalPath: string, availableTasks: Task[]) {
       }
     }
   } else if (mode !== 'disabled') {
-    showErrorUnknownMode(mode)
+    logErrorUnknownMode(mode)
   }
 }
