@@ -28,33 +28,37 @@ function autolaunchWorkspaceTasksAndConfigurations(
 ) {
   const mode: string = workspace.getConfiguration('autolaunch', workspaceFolder).get('mode')
   if (mode === 'auto' || mode === 'prompt') {
-    const tasksToRun = getWorkspaceTasksToRun(workspaceFolder, availableTasks)
-    const configurationsToLaunch = getWorkspaceConfigurationsToLaunch(workspaceFolder)
+    const tasks = getWorkspaceTasksToRun(workspaceFolder, availableTasks)
+    const configurations = getWorkspaceConfigurationsToLaunch(workspaceFolder)
 
-    if (tasksToRun.length || configurationsToLaunch.length) {
+    if (tasks.length > 0 || configurations.length > 0) {
       if (mode === 'auto') {
-        runTasks(tasksToRun)
-        launchConfigurations(configurationsToLaunch)
+        runTasks(tasks)
+        launchConfigurations(configurations)
       } else {
         let promptMessage: string
-        if (tasksToRun.length && configurationsToLaunch.length) {
-          promptMessage = `Run tasks [${tasksToRun
+        if (tasks.length > 0 && configurations.length > 0) {
+          promptMessage = `Run ${pluralize('task', tasks.length)} [${tasks
             .map((t) => t.name)
-            .join(', ')}] and launch configurations [${configurationsToLaunch
-            .map((c) => c.name)
+            .join(', ')}] and launch ${pluralize(
+            'configuration',
+            configurations.length
+          )} [${configurations.map((c) => c.name).join(', ')}]`
+        } else if (tasks.length > 0) {
+          promptMessage = `Run ${pluralize('task', tasks.length)} [${tasks
+            .map((t) => t.name)
             .join(', ')}]`
-        } else if (tasksToRun.length) {
-          promptMessage = `Run tasks [${tasksToRun.map((t) => t.name).join(', ')}]`
         } else {
-          promptMessage = `Launch configurations [${configurationsToLaunch
-            .map((c) => c.name)
-            .join(', ')}]`
+          promptMessage = `Launch ${pluralize(
+            'configuration',
+            configurations.length
+          )} [${configurations.map((c) => c.name).join(', ')}]`
         }
         promptMessage += ` in the workspace folder "${workspaceFolder.name}"?`
         window.showInformationMessage(promptMessage, yes, no).then((result) => {
           if (result === yes) {
-            runTasks(tasksToRun)
-            launchConfigurations(configurationsToLaunch)
+            runTasks(tasks)
+            launchConfigurations(configurations)
           }
         })
       }
@@ -67,16 +71,18 @@ function autolaunchWorkspaceTasksAndConfigurations(
 async function autolaunchUserTasks(globalPath: string, availableTasks: Task[]) {
   const mode: string = workspace.getConfiguration('autolaunch').get('mode')
   if (mode === 'auto' || mode === 'prompt') {
-    const tasksToRun = await getUserTasksToRun(globalPath, availableTasks)
+    const tasks = await getUserTasksToRun(globalPath, availableTasks)
 
-    if (tasksToRun.length) {
+    if (tasks.length > 0) {
       if (mode === 'auto') {
-        runTasks(tasksToRun)
+        runTasks(tasks)
       } else {
-        const promptMessage = `Run user tasks [${tasksToRun.map((t) => t.name).join(', ')}]?`
+        const promptMessage = `Run user ${pluralize('task', tasks.length)} [${tasks
+          .map((t) => t.name)
+          .join(', ')}]?`
         window.showInformationMessage(promptMessage, yes, no).then((result) => {
           if (result === yes) {
-            runTasks(tasksToRun)
+            runTasks(tasks)
           }
         })
       }
@@ -84,4 +90,8 @@ async function autolaunchUserTasks(globalPath: string, availableTasks: Task[]) {
   } else if (mode !== 'disabled') {
     logErrorUnknownMode(mode)
   }
+}
+
+function pluralize(word: string, count: number) {
+  return count > 1 ? word + 's' : word
 }
