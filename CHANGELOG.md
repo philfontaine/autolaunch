@@ -1,5 +1,11 @@
 # Changelog
 
+### 2.1.2 (April 10, 2022)
+
+- Fixed a bug related to user tasks, where the extension tried to run the task twice.
+- Prompt mode: Changed the Yes/No button order so that the Yes button is the primary color.
+- Errors will now be displayed in a dedicated output instead of in notifications.
+
 ### 2.1.1 (March 28, 2022)
 
 - Fixed: user level tasks were failing silently if the file had comments (now parsing with JSON5)
