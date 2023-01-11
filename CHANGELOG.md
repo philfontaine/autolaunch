@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.1.3 (January 10, 2023)
+
+- Update dependencies (security fixes)
+
 ### 2.1.2 (April 10, 2022)
 
 - Fixed a bug related to user tasks, where the extension tried to run the task twice.
